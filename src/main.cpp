@@ -1,5 +1,5 @@
 #define BLYNK_TEMPLATE_ID "TMPL61hu1C9SK"
-#define BLYNK_TEMPLATE_NAME "gg"
+#define BLYNK_TEMPLATE_NAME "SmartRoom"
 #define BLYNK_AUTH_TOKEN "8sCjg4sM3q4sRP8qYmE-nENkma0QvkIA"
 
 #include <BlynkSimpleEsp32.h>
@@ -42,6 +42,7 @@ HardwareSerial RadarSerial(2);
 DHT dht(DHTPIN, DHTTYPE);
 
 float temperature = 0;
+float humidity = 0;
 int lightValue = 0;
 String lightState = "";
 
@@ -80,6 +81,7 @@ void updateBlynkUI() {
   Blynk.virtualWrite(V1, digitalRead(LED_LAMP));
   Blynk.virtualWrite(V2, fanSpeed);
   Blynk.virtualWrite(V4, temperature);
+  Blynk.virtualWrite(V5, humidity);
 }
 // dieu khien che do manual hay auto
 BLYNK_WRITE(V3) { manualMode = param.asInt(); }
@@ -125,6 +127,7 @@ void TaskRadar(void* pvParameters) {
 void TaskSensor(void* pvParameters) {
   while (1) {
     temperature = dht.readTemperature();
+    humidity = dht.readHumidity();
 
     lightValue = analogRead(LDR_PIN);
 
@@ -139,6 +142,9 @@ void TaskSensor(void* pvParameters) {
 
     Serial.print("Temperature: ");
     Serial.print(temperature);
+
+    Serial.print("Humidity: ");
+    Serial.println(humidity);
 
     Serial.print("Light Value: ");
     Serial.println(lightValue);
